@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "index.js",
+      "src": "api/**/*.js",
       "use": "@vercel/node"
     },
     {
@@ -19,8 +19,5 @@
       "src": "/(.*)",
       "dest": "/public/$1"
     }
-  ],
-  "env": {
-    "MONGODB_URI": "mongodb+srv://pritamtung03_db_user:WLIFVuRwEev7APoP@cluster0.4ysopge.mongodb.net/Study_game"
-  }
+  ]
 }

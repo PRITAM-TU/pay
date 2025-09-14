@@ -10,13 +10,14 @@ document.addEventListener('DOMContentLoaded', function() {
     radio.addEventListener('change', function() {
       if (this.value === 'online') {
         screenshotField.style.display = 'block';
-        document.getElementById('screenshot').setAttribute('required', '');
       } else {
         screenshotField.style.display = 'none';
-        document.getElementById('screenshot').removeAttribute('required');
       }
     });
   });
+  
+  // Refresh button
+  document.getElementById('refreshBtn').addEventListener('click', loadPayments);
   
   // Form submission
   const paymentForm = document.getElementById('paymentForm');
@@ -27,12 +28,20 @@ document.addEventListener('DOMContentLoaded', function() {
     submitBtn.textContent = 'Submitting...';
     submitBtn.disabled = true;
     
-    const formData = new FormData(this);
+    const formData = {
+      name: document.getElementById('name').value,
+      email: document.getElementById('email').value,
+      paymentMethod: document.querySelector('input[name="paymentMethod"]:checked').value,
+      date: document.getElementById('date').value
+    };
     
     try {
       const response = await fetch('/api/submit', {
         method: 'POST',
-        body: formData
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
       });
       
       const result = await response.json();
@@ -70,6 +79,10 @@ async function loadPayments() {
   
   try {
     const response = await fetch('/api/payments');
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
     const payments = await response.json();
     
     if (payments.length === 0) {
@@ -105,7 +118,6 @@ async function loadPayments() {
         <div class="payment-details">
           <p>Email: ${payment.email}</p>
           <p>Method: <span class="payment-method method-${payment.paymentMethod}">${payment.paymentMethod}</span></p>
-          ${payment.screenshot ? `<p>Screenshot: <a href="${payment.screenshot}" target="_blank">View</a></p>` : ''}
         </div>
       `;
       
@@ -113,6 +125,6 @@ async function loadPayments() {
     });
   } catch (error) {
     console.error('Error loading payments:', error);
-    paymentsList.innerHTML = '<div class="error">Failed to load payments</div>';
+    paymentsList.innerHTML = '<div class="error">Failed to load payments. Please check if the server is running.</div>';
   }
 }
