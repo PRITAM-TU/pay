@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pay For Water</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>💧 Pay For Water</h1>
+      <p>Track your water payments easily</p>
+    </header>
+
+    <div class="content">
+      <section class="form-section">
+        <h2>Submit Payment</h2>
+        <form id="paymentForm" enctype="multipart/form-data">
+          <div class="form-group">
+            <label for="name">Full Name</label>
+            <input type="text" id="name" name="name" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" required>
+          </div>
+          
+          <div class="form-group">
+            <label>Payment Method</label>
+            <div class="radio-group">
+              <label class="radio-container">
+                <input type="radio" name="paymentMethod" value="cash" checked>
+                <span class="checkmark"></span>
+                Cash
+              </label>
+              <label class="radio-container">
+                <input type="radio" name="paymentMethod" value="online">
+                <span class="checkmark"></span>
+                Online
+              </label>
+            </div>
+          </div>
+          
+          <div class="form-group" id="screenshotField" style="display: none;">
+            <label for="screenshot">Screenshot of Payment</label>
+            <input type="file" id="screenshot" name="screenshot" accept="image/*">
+          </div>
+          
+          <div class="form-group">
+            <label for="date">Payment Date</label>
+            <input type="date" id="date" name="date" required>
+          </div>
+          
+          <button type="submit" class="submit-btn">Submit Payment</button>
+        </form>
+      </section>
+
+      <section class="details-section">
+        <h2>Payment Records</h2>
+        <div class="filters">
+          <input type="text" id="searchInput" placeholder="Search by name or email...">
+        </div>
+        <div class="payments-list" id="paymentsList">
+          <div class="loading">Loading payments...</div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
