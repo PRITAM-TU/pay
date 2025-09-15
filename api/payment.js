@@ -27,34 +27,36 @@ const paymentSchema = new mongoose.Schema({
   }
 });
 
-let Payment;
-let isConnected = false;
+// Cache the connection
+let cached = global.mongoose;
+if (!cached) {
+  cached = global.mongoose = { conn: null, promise: null, Payment: null };
+}
 
 async function connectToDatabase() {
-  if (isConnected) {
-    return;
+  if (cached.conn) {
+    return cached;
   }
   
-  try {
-    await mongoose.connect(MONGODB_URI, {
+  if (!cached.promise) {
+    cached.promise = mongoose.connect(MONGODB_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
+    }).then((mongoose) => {
+      // Define model after connection
+      cached.Payment = mongoose.model('Payment', paymentSchema);
+      return { mongoose, Payment: cached.Payment };
     });
-    isConnected = true;
-    console.log('Connected to MongoDB');
-    
-    // Define model after connection
-    Payment = mongoose.model('Payment', paymentSchema);
-  } catch (error) {
-    console.error('Error connecting to MongoDB:', error);
-    throw error;
   }
+  
+  cached.conn = await cached.promise;
+  return cached;
 }
 
 module.exports = async (req, res) => {
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   
   // Handle preflight request
@@ -67,11 +69,12 @@ module.exports = async (req, res) => {
   }
   
   try {
-    await connectToDatabase();
+    const { conn, Payment } = await connectToDatabase();
+    
     const payments = await Payment.find().sort({ date: -1 });
     res.status(200).json(payments);
   } catch (error) {
     console.error('Error fetching payments:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({ error: 'Internal server error: ' + error.message });
   }
 };
