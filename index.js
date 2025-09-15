@@ -15,7 +15,7 @@ app.use('/uploads', express.static('uploads'));
 
 
 // MongoDB Connection
-const MONGODB_URI = "mongodb+srv://pritamtung03_db_user:WLIFVuRwEev7APoP@cluster0.4ysopge.mongodb.net/Study_game";
+const MONGODB_URI = process.env.MONGODB_URI || "mongodb+srv://pritamtung03_db_user:WLIFVuRwEev7APoP@cluster0.4ysopge.mongodb.net/Study_game";
 // mongoose.connect(MONGODB_URI, {
 //   useNewUrlParser: true,
 //   useUnifiedTopology: true,
